@@ -10,7 +10,7 @@ public class TitleScreenController : MonoBehaviour
 
     public void Update()
     {
-        if (!startPressed && Input.anyKey)
+        if (!startPressed && Input.GetKeyDown(KeyCode.Space))
         {
             startPressed = true;
             StartCoroutine(StartGameEnumerator());
