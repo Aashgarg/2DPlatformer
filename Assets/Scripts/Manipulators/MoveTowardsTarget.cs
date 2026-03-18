@@ -27,7 +27,35 @@ public class MoveTowardsTarget : MonoBehaviour
 
     void FixedUpdate()
     {
-        Vector2 moveDirection = Vector2.zero;
+        Transform target = targetIsPlayer ? playerTransform : alternativeTarget;
+        if (target == null) return;
+
+        Vector2 dir = (target.position - transform.position);
+        if (dir.sqrMagnitude <= 0.0001f) return;
+        dir.Normalize();
+
+        Vector2 moveDirection = new Vector2(
+            moveInXDirection ? dir.x : 0f,
+            moveInYDirection ? dir.y : 0f
+        );
+
+        // If Rigidbody2D is kinematic, AddForce does nothing — move using MovePosition
+        if (rigidbody2D.bodyType == RigidbodyType2D.Kinematic)
+        {
+            Vector2 desiredVelocity = moveDirection * moveSpeed;
+            Vector2 newPos = rigidbody2D.position + desiredVelocity * Time.fixedDeltaTime;
+            rigidbody2D.MovePosition(newPos);
+        }
+        else
+        {
+            // Dynamic or other body types: use forces and clamp velocity
+            rigidbody2D.AddForce(moveDirection * moveSpeed);
+            if (rigidbody2D.linearVelocity.sqrMagnitude > (maxSpeed * maxSpeed))
+            {
+                rigidbody2D.linearVelocity = rigidbody2D.linearVelocity.normalized * maxSpeed;
+            }
+        }
+        /*Vector2 moveDirection = Vector2.zero;
         Transform target = alternativeTarget;
 
         if(targetIsPlayer)
@@ -41,6 +69,6 @@ public class MoveTowardsTarget : MonoBehaviour
             moveInYDirection ? moveDirection.y : 0
         );
 
-        rigidbody2D.AddForce(Vector3.ClampMagnitude(moveDirection * moveSpeed,maxSpeed));
+        rigidbody2D.AddForce(Vector3.ClampMagnitude(moveDirection * moveSpeed,maxSpeed));*/
     }
 }
