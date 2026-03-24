@@ -40,7 +40,7 @@ public class PlayerController : MonoBehaviour
     [Space]
     [Header("Wall Jumping")]
     [Tooltip("Whether or not the player can jump while sliding down walls.")]
-    public bool allowWallJump = true;
+    public bool allowWallJump = false;
     [Tooltip("Whether or not wall jumping shoudl replenish the player's wall jumps.")]
     public bool resetDoubleJumpsOnWall = true;
     [Tooltip("The stats for performing a jump while sliding on a wall.")]
@@ -383,9 +383,10 @@ public class PlayerController : MonoBehaviour
 
     private bool CanJump()
     {
+        bool allowAirJumpsOnWall = !IsOnWall() || allowWallJump;
         return IsOnGroundWithCoyoteTime()
             || (IsOnWall() && allowWallJump)
-            || (jumpsSinceGroundTouch <= GetAvailableJumps() && !isInWater);
+            || (allowAirJumpsOnWall && (jumpsSinceGroundTouch <= GetAvailableJumps()) && !isInWater);
     }
 
     private int GetAvailableJumps()
