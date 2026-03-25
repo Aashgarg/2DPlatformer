@@ -31,7 +31,7 @@ public class Collector : MonoBehaviour
     {
         if (displayText != null)
         {
-            displayText.text = string.Format(displayFormat, leftToCollect);
+            displayText.text = string.Format(displayFormat, totalCollected);
         }
     }
 
